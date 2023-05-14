@@ -1,0 +1,17 @@
+.edit-page__content {
+    display: flex;
+}
+
+.edit-page__left {
+    width: 70%;
+}
+
+.edit-page__right {
+    width: 30%;
+}
+
+.edit-page__buy-game {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
