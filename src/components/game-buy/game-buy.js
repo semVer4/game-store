@@ -6,7 +6,9 @@ import "./game-buy.css";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid';
+import { collection, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
@@ -44,7 +46,7 @@ export const GameBuy = ({ game }) => {
   const handleAddToCart = (product) => {
     if (user) {
       const newCart = [...cart, product];
-      db.collection('carts').doc(user.uid).set({ cart: newCart });
+      db.collection('carts').doc(user.uid).set({ cart: newCart }, { merge: true });
       setCart(newCart);
     } else {
       history.push('/auth');
@@ -62,9 +64,16 @@ export const GameBuy = ({ game }) => {
 
   const handleClick = (e) => {
     e.stopPropagation();
-      //dispatch(setItemInCart(game));
+    //dispatch(setItemInCart(game));
+
     handleAddToCart(game);
   };
+
+  if (cart.length > 0) {
+    if (game.id == cart.map((cart) => cart.id)) {
+      console.log(true);
+    }
+  }
 
   return (
     <div className="game-buy">
@@ -73,7 +82,7 @@ export const GameBuy = ({ game }) => {
         type={isItemInCart ? "secondary" : "primary" }
         onClick={handleClick}
       >
-        {isItemInCart ? "Убрать из корзины" : "В Корзину"}
+        {isItemInCart ? "В корзине" : "В Корзину"}
       </Button>
     </div>
   );

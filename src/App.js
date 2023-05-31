@@ -9,8 +9,8 @@ import { GamePage } from "./pages/game-page";
 import { OrderPage } from "./pages/order-page";
 import { AuthPage } from "./pages/auth-page";
 import { AdminPage } from "./pages/admin-page/admin-page";
-import { RegPage } from "./pages/reg-page";
 import { EditPage } from "./pages/edit-page";
+import { ProfilePage } from "./pages/profile-page";
 import { Provider } from "react-redux";
 import { store } from "./store";
 
@@ -36,11 +36,11 @@ function App() {
               <Route exact path="/auth">
                 <AuthPage />
               </Route>
-              <Route exact path="/reg">
-                <RegPage />
-              </Route>
               <Route exact path="/admin">
                 <AdminPage />
+              </Route>
+              <Route exact path="/profile">
+                <ProfilePage />
               </Route>
             </Switch>
         </div>

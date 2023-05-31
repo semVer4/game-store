@@ -26,6 +26,9 @@ export const OrderItem = ({ game }) => {
 
     const [cartItems, setCartItems] = useState([]);
 
+    const [user, setUser] = useState(null);
+    const [cart, setCart] = useState([]);
+
     useEffect(() => {
       const db = firebase.firestore();
       const unsubscribe = db.collection("carts").onSnapshot((snapshot) => {
@@ -40,13 +43,22 @@ export const OrderItem = ({ game }) => {
       };
     }, []);
   
+    const loadCart = async (userId) => {
+      const snapshot = await db.collection('carts').doc(userId).get();
+      if (snapshot.exists) { 
+        setCart(snapshot.data().cart);
+      } else {
+        setCart([]);
+      }
+    };  
+
     const deleteCartItem = async (cartItemId) => {
-        try {
-            await firebase.firestore().collection("carts").doc(cartItems[0].id).delete();
-            
-          } catch (error) {
-            console.error("Error removing item from cart: ", error);
-          }
+      try {
+          await firebase.firestore().collection("carts").doc(cartItemId).delete();
+          
+        } catch (error) {
+          console.error("Error removing item from cart: ", error);
+        }
     };
 
     return (
@@ -64,7 +76,8 @@ export const OrderItem = ({ game }) => {
                     className="cart-item__delete-icon"
                     onClick={() => {
                         if (cartItems[0].id) {
-                          deleteCartItem(cartItems[0].id)
+                          deleteCartItem(cartItems[0].id);
+                          loadCart(cartItems[0].id);
                         }
                     }}
                 />

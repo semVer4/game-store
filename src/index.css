@@ -5,7 +5,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-    background-color: rgb(25, 26, 28);
+    background: #000000;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+  background-color: black;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: blueviolet;
 }
 
 code {
@@ -14,7 +23,7 @@ code {
 }
 
 .App {
-  max-width: 1180px;;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 0 40px;
   color: white;

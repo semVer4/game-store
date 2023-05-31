@@ -104,28 +104,29 @@ export const EditPage = () => {
 
   return (
     <div className="edit-page">
-      <button onClick={deleteGame}>Удалить игру</button>
+  
+      <div className="container__item">
+      <button id="delete" className="btnz btns btn--inside uppercase" onClick={deleteGame}>Удалить игру</button>
+        <div className="form">
+          <h1>Изменить название игры</h1>
+          <input className="form__field" placeholder={game.title} value={title} onChange={(e) => setTitle(e.target.value)} />
+          <button className="btnz btns btn--inside uppercase" onClick={editTitle}>Изменить</button>
 
-      <h1>Изменить название игры</h1>
-      <input className="edit-page__title" placeholder={game.title} value={title} onChange={(e) => setTitle(e.target.value)} />
-      <button onClick={editTitle}>Изменить</button>
-      <div className="edit-page__content">
-        <div className="edit-page__left">
           <h1>Изменить ссылку на видео</h1>
-          <input placeholder={game.video} value={video} onChange={(e) => setVideo(e.target.value)} />
-          <button onClick={editVideo}>Изменить</button>
-        </div>
-        <div className="edit-page__right">
-        <h1>Изменить ссылку на изображение</h1>
-          <input placeholder={game.image} value={image} onChange={(e) => setImage(e.target.value)} />
-          <button onClick={editImage}>Изменить</button>
+          <input className="form__field" placeholder={game.video} value={video} onChange={(e) => setVideo(e.target.value)} />
+          <button className="btnz btns btn--inside uppercase" onClick={editVideo}>Изменить</button>
+
+          <h1>Изменить ссылку на изображение</h1>
+          <input className="form__field" placeholder={game.image} value={image} onChange={(e) => setImage(e.target.value)} />
+          <button className="btnz btns btn--inside uppercase" onClick={editImage}>Изменить</button>
+
           <h1>Изменить описание</h1>
-          <input placeholder={game.description} value={description} onChange={(e) => setDescription(e.target.value)} />
-          <button onClick={editDescription}>Изменить</button>
+          <input className="form__field" placeholder={game.description} value={description} onChange={(e) => setDescription(e.target.value)} />
+          <button className="btnz btns btn--inside uppercase" onClick={editDescription}>Изменить</button>
 
           <h1>Изменить цену</h1>
-          <input placeholder={game.price} value={price} onChange={(e) => setPrice(e.target.value)} />
-          <button onClick={editPrice}>Изменить</button>
+          <input className="form__field" placeholder={game.price} value={price} onChange={(e) => setPrice(e.target.value)} />
+          <button className="btnz btns btn--inside uppercase" onClick={editPrice}>Изменить</button>
         </div>
       </div>
     </div>

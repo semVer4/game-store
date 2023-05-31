@@ -1,4 +1,189 @@
 .home-page {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 50px;
 }
+
+@import url('https://unpkg.com/css.gg@2.0.0/icons/css/search.css');
+
+.flex-center {
+  display: flex;
+  margin-top: 50px;
+  margin-left: 70px;
+  gap: 50px;
+}
+
+.gg-search {
+    left: 12px;
+}
+
+.search-box{
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+  }
+  .input-search{
+    height: 50px;
+    width: 50px;
+    border-style: none;
+    padding: 10px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    outline: none;
+    border-radius: 25px;
+    transition: all .5s ease-in-out;
+    background-color: #293642;
+    padding-right: 40px;
+    color:#fff;
+  }
+  .input-search::placeholder{
+    color:#fff;
+    font-size: 18px;
+    letter-spacing: 2px;
+    font-weight: 100;
+  }
+  .btn-search{
+    width: 50px;
+    height: 50px;
+    border-style: none;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    border-radius: 50%;
+    position: absolute;
+    right: -2px;
+    color:#fff;
+    background-color:transparent;
+    pointer-events: painted;  
+  }
+  .btn-search:focus ~ .input-search{
+    width: 300px;
+    border-radius: 0px;
+    background-color: transparent;
+    border-bottom:1px solid #fff;
+    transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
+  }
+  .input-search:focus{
+    width: 300px;
+    border-radius: 0px;
+    background-color: transparent;
+    border-bottom:1px solid rgba(255,255,255,.5);
+    transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
+  }
+
+  select {
+    /* Reset Select */
+    appearance: none;
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+    /* Personalize */
+    flex: 1;
+    padding: 0 1em;
+    color: #fff;
+    background-color: #293642;
+    background-image: none;
+    cursor: pointer;
+  }
+  /* Remove IE arrow */
+  select::-ms-expand {
+    display: none;
+  }
+  /* Custom Select wrapper */
+  .select {
+    position: relative;
+    display: flex;
+    width: 20em;
+    height: 3em;
+    border-radius: .25em;
+    overflow: hidden;
+  }
+  /* Arrow */
+  .select::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1em;
+    background-color: #34495e;
+    transition: .25s all ease;
+    pointer-events: none;
+  }
+  /* Transition */
+  .select:hover::after {
+    color: #bb12f3;
+  }
+
+  :root {
+    --hue: 223;
+    --bg: hsl(var(--hue),90%,95%);
+    --fg: hsl(var(--hue),90%,5%);
+    --trans-dur: 0.3s;
+  }
+  
+  main {
+    display: flex;
+    justify-content: center;
+    margin-top: 180px;
+    padding: 1.5em 0;
+  }
+  .ip {
+    width: 16em;
+    height: 8em;
+  }
+  .ip__track {
+    stroke: hsl(var(--hue),90%,90%);
+    transition: stroke var(--trans-dur);
+  }
+  .ip__worm1,
+  .ip__worm2 {
+    animation: worm1 2s linear infinite;
+  }
+  .ip__worm2 {
+    animation-name: worm2;
+  }
+  
+  /* Dark theme */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: hsl(var(--hue),90%,5%);
+      --fg: hsl(var(--hue),90%,95%);
+    }
+    .ip__track {
+      stroke: hsl(var(--hue),90%,15%);
+    }
+  }
+  
+  /* Animation */
+  @keyframes worm1 {
+    from {
+      stroke-dashoffset: 0;
+    }
+    50% {
+      animation-timing-function: steps(1);
+      stroke-dashoffset: -358;
+    }
+    50.01% {
+      animation-timing-function: linear;
+      stroke-dashoffset: 358;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes worm2 {
+    from {
+      stroke-dashoffset: 358;
+    }
+    50% {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -358;
+    }
+  }
+
+  *{
+    box-sizing: border-box;
+  }

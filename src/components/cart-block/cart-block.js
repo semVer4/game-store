@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { BiCartAlt } from "react-icons/bi";
+import { BiLogIn } from "react-icons/bi";
+import { BiUser } from "react-icons/bi";
 import { CartMenu } from "../cart-menu";
 import { ItemsInCart } from "../items-in-cart";
 import { calcTotalPrice } from '../utils';
@@ -22,13 +24,19 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const db = firebase.firestore();
-
 export const CartBlock = () => {
   const [isCartMenuVisible, setIsCartMenuVisible] = useState(false);
   const items = useSelector((state) => state.cart.itemsInCart);
   const history = useHistory();
   const totalPrice = calcTotalPrice(items);
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      setUser(user);
+    });
+  }, []);  
 
   const handleGoToOrderClick = useCallback(() => {
     setIsCartMenuVisible(false);
@@ -39,25 +47,38 @@ export const CartBlock = () => {
     history.push('/auth');
   };
 
-  const handleClickAdm = () => {
-    history.push('/admin');
+  const handleGoToProfileClick = () => {
+    history.push('/profile');
   };
 
   return (
     <div className="cart-block">
       <ItemsInCart quantity={items.length}/>
+
+      {user ? (<div>{user.email}</div>) : (<div>Авторизуйтесь</div>)}
+
+      <BiUser
+        color="white"
+        size={25}
+        className="cart-icon"
+        onClick={handleGoToProfileClick}
+      />
+
       <BiCartAlt
         color="white"
         size={25}
         className="cart-icon"
         onClick={() => setIsCartMenuVisible(!isCartMenuVisible)}
       />
-      <p onClick={handleClick}>SIGN</p>
-      <p onClick={handleClickAdm}> _ADMIN</p>
+      <BiLogIn
+        className="cart-icon"
+        size={25}
+        onClick={handleClick}
+      />
       {totalPrice > 0 ? (
         <span className="total-price">{totalPrice} руб.</span>
       ) : null}
-      {isCartMenuVisible && <CartMenu onClick={ handleGoToOrderClick }/>}
+      {isCartMenuVisible && <CartMenu onClick={ handleGoToOrderClick } />}
     </div>
   );
 };

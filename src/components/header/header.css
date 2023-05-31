@@ -4,6 +4,12 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30px;
+    margin-top: 20px;
+    background-color: #293642;
+    box-shadow: 3px 3px 550px rgb(187, 0, 255);
+    opacity: 0.9;
+    padding: 30px;
+    border-radius: 5px;
 }
 
 .wrapper {
@@ -11,13 +17,77 @@
     flex-grow: 1;
 }
 
+.wrapper ul {
+    margin-top: 20px;
+}
+
+.wrapper ul li {
+    display: inline;
+    margin: 0px 50px 0px 0px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.wrapper ul li:hover {
+    color: rgb(187, 0, 255);
+}
+
 .header__store-title {
     color: white;
     text-decoration: none;
     font-size: 24px;
     font-weight: bold;
+    margin-top: 6px;
 }
 
 .header__cart-btn-wrapper {
     justify-content: flex-end;
 }
+
+/*LOGO*/
+.loader {
+    position: relative;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-gap: 2px;
+    width: 50px;
+    height: 50px;
+  }
+  .loader > div {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    background: rgb(141, 0, 202);
+    transform: scale(0);
+    transform-origin: center center;
+    animation: loader 2s infinite linear;
+  }
+  .loader > div:nth-of-type(1), .loader > div:nth-of-type(5), .loader > div:nth-of-type(9) {
+    animation-delay: 0.4s;
+  }
+  .loader > div:nth-of-type(4), .loader > div:nth-of-type(8) {
+    animation-delay: 0.2s;
+  }
+  .loader > div:nth-of-type(2), .loader > div:nth-of-type(6) {
+    animation-delay: 0.6s;
+  }
+  .loader > div:nth-of-type(3) {
+    animation-delay: 0.8s;
+  }
+  
+  @keyframes loader {
+    0% {
+      transform: scale(0);
+    }
+    40% {
+      transform: scale(1);
+    }
+    80% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }

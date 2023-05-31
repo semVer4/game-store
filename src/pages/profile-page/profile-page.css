@@ -1,0 +1,42 @@
+.profile-page {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0px 0px 0px 50px;
+}
+
+.gameItem {
+    display: flex;
+    gap: 30px;
+    margin: 20px;
+    background-color: #3C2F5A;
+    box-shadow: 0px 0px 150px purple;
+    border-radius: 5px;
+    width: 600px;
+}
+
+.gameItem p {
+    position: relative;
+    font-size: 25px;
+    font-weight: bold;
+    bottom: 13px;
+    height: 5px;
+    right: 160px;
+}
+
+.test {
+    float: right;
+}
+
+.form1 {
+    display: flex;
+}
+
+.gameItem a {
+    position: relative;
+    top: 60px;
+    background-color: purple;
+    width: 130px;
+    height: 30px;
+    padding: 3px 0px 0px 25px;
+    border-radius: 5px;
+}

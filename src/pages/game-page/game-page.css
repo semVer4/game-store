@@ -1,3 +1,7 @@
+.game-page {
+    padding: 0px 50px 0px 50px;
+}
+
 .game-page__content {
     display: flex;
 }

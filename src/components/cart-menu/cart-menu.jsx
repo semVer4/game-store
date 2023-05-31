@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Button } from "../button";
 import { CartItem } from "../cart-item";
 import { calcTotalPrice } from "../utils";
+import './cart-menu.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -20,7 +21,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-export const CartMenu = ({ onClick }) => {
+export const CartMenu = ({ onClick, game }) => {
   const items = useSelector((state) => state.cart.itemsInCart);
 
   const [cartItems, setCartItems] = useState([]);
@@ -39,22 +40,33 @@ export const CartMenu = ({ onClick }) => {
     };
   }, []);
 
-  const deleteCartItem = (cartItemId) => {
-    const db = firebase.firestore();
-    db.collection("carts")
-      .doc(cartItemId)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted!");
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
+  const [user, setUser] = useState(null);
+  const [cart, setCart] = useState([]);  
+
+  const collectionRef = db.collection("carts");
+  const deleteCartItem = () => {
+    collectionRef
+    .where("id", "==", '4e5aa808-805b-4c6f-9250-1c3f370f810e')
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const docRef = collectionRef.doc(doc.id);
+        docRef.update({
+          cart: firebase.firestore.FieldValue.delete()
+        })
+        .then(() => {
+          console.log("Array successfully removed from Firestore!");
+        })
+        .catch((error) => {
+          console.error("Error removing array from Firestore: ", error);
+        });
       });
+    })
+    .catch((error) => {
+      console.error("Error getting documents: ", error);
+    });
   };
 
-  const [user, setUser] = useState(null);
-  const [cart, setCart] = useState([]);
-  
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user);
@@ -72,38 +84,22 @@ export const CartMenu = ({ onClick }) => {
     } else {
       setCart([]);
     }
-  };  
+  }; 
 
+  console.log(cart);
   return (
     <div className="cart-menu">
       <div className="cart-menu__games-list">
         {cart.length > 0 ? (
-              <div>
-                {cart.map(product => (
-                <p onClick={() => {
-                  if (cartItems[0].id) {
-                    deleteCartItem(cartItems[0].id)
-                  }
-                }} key={product.id}>
-                  {product.title} - {product.price} руб.
-                </p>
-              ))}
-                <Button type="primary" size="m" onClick={onClick}>
-                  Оформить заказ
-                </Button>
-                </div>
+          <div>
+            <Button type="primary" size="m" onClick={onClick}>
+              Оформить заказ
+            </Button>
+          </div>
           ) : (
             <p>Корзина пуста.</p>
           )}
       </div>
-      {items.length > 0 ? (
-        <div className="cart-menu__arrange">
-          <div className="cart-menu__total-price">
-            <span>Итого:</span>
-            <span>{calcTotalPrice(items)} руб.</span>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 };
