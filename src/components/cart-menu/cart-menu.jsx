@@ -86,7 +86,7 @@ export const CartMenu = ({ onClick, game }) => {
     }
   }; 
 
-  console.log(cart);
+  console.log(cart.length);
   return (
     <div className="cart-menu">
       <div className="cart-menu__games-list">

@@ -38,27 +38,41 @@ export const GameBuy = ({ game }) => {
       setUser(user);
       if (user) {
         // Если пользователь авторизован, загрузите его корзину из базы данных
-        loadCart(user.uid);
+        loadCart();
       }
     });
   }, []);
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = async (cart) => {
     if (user) {
-      const newCart = [...cart, product];
-      db.collection('carts').doc(user.uid).set({ cart: newCart }, { merge: true });
-      setCart(newCart);
+      db.collection('users').doc(user.uid).collection('cart').add({
+        cart: cart
+      })
+        .then(() => {
+          setCart([cart, cart]);
+          console.log('Товар добавлен в корзину.');
+        })
+        .catch((error) => {
+          console.error('Ошибка при добавлении товара в корзину:', error);
+        });
     } else {
       history.push('/auth');
     }
   };
 
-  const loadCart = async (userId) => {
-    const snapshot = await db.collection('carts').doc(userId).get();
-    if (snapshot.exists) {
-      setCart(snapshot.data().cart);
-    } else {
-      setCart([]);
+  const loadCart = async () => {
+    if (user) {
+      const unsubscribe = db
+        .doc(user.uid)
+        .collection('carts')
+        .onSnapshot((snapshot) => {
+          const items = snapshot.docs.map((doc) => doc.data());
+          setCart(items);
+        });
+
+      return () => {
+        unsubscribe();
+      };
     }
   };  
 
@@ -68,12 +82,6 @@ export const GameBuy = ({ game }) => {
 
     handleAddToCart(game);
   };
-
-  if (cart.length > 0) {
-    if (game.id == cart.map((cart) => cart.id)) {
-      console.log(true);
-    }
-  }
 
   return (
     <div className="game-buy">

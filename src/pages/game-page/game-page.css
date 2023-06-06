@@ -7,15 +7,24 @@
 }
 
 .game-page__left {
-    width: 70%;
+    width: 60%;
+    margin-top: 30px;
 }
 
 .game-page__right {
-    width: 30%;
+    width: 40%;
 }
 
 .game-page__buy-game {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
+}
+
+.carousel {
+    width: 70%;
+}
+
+.similar {
+    margin-top: 80px;
 }

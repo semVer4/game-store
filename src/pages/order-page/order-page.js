@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector} from 'react-redux';
 import { OrderItem } from '../../components/order-item';
 import { calcTotalPrice, enumerate } from '../../components/utils';
@@ -8,6 +8,7 @@ import firebase from 'firebase/compat/app';
 import { useHistory } from 'react-router-dom';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import { collection, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
@@ -35,26 +36,24 @@ export const OrderPage = () => {
         if (user) {
           // Если пользователь авторизован, загрузите его корзину из базы данных
           loadCart(user.uid);
-          loadpGames(user.uid);
         }
       });
     }, []);
   
     const loadCart = async (userId) => {
-      const snapshot = await db.collection('carts').doc(userId).get();
-      if (snapshot.exists) {
-        setCart(snapshot.data().cart);
-      } else {
-        setCart([]);
-      }
-    };  
-
-    const loadpGames = async (userId) => {
-      const snapshot = await db.collection('pGames').doc(userId).get();
-      if (snapshot.exists) {
-        setpGames(snapshot.data().cart);
-      } else {
-        setpGames([]);
+      if (user) {
+        const unsubscribe = db
+          .collection('users')
+          .doc(user.uid)
+          .collection('carts')
+          .onSnapshot((snapshot) => {
+            const items = snapshot.docs.map((doc) => doc.data());
+            setCart(items);
+          });
+  
+        return () => {
+          unsubscribe();
+        };
       }
     };  
 
@@ -128,19 +127,14 @@ export const OrderPage = () => {
       const isAlreadyInCart = await isGameInCart(user.uid, cart.map(item => item.id));
 
       const price = calcTotalPrice(cart);
-      const newCart = [...cart, product];
+      const newCart = [...cart, cart];
 
         if (balance >= price) {
-          try {
-            const userRef = db.collection('pGames').doc(user.uid);
-            const userSnapshot = await userRef.get();
+            const userRef = doc(collection(db, "pGames"), user.uid);
         
-            if (userSnapshot.exists) {
-              db.collection('pGames').doc(user.uid).set({ cart: newCart }, { merge: true });
-              setCart(newCart);
-            } 
-          } catch (error) {
-          }
+            setDoc(userRef, {
+              newCart
+            });
           const newBalance = Number(balance) - Number(price);
           setBalance(newBalance);
               
@@ -151,7 +145,7 @@ export const OrderPage = () => {
     };
 
     if(cart.length < 1) {
-        return <h1>Ваша корзина пуста!</h1>
+      return <h1>Ваша корзина пуста!</h1>
     }
 
     return (
