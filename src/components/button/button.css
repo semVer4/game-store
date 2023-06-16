@@ -7,7 +7,7 @@
 }
 
 .btn--primary {
-    background-color: rgb(85, 88, 237);
+    background: linear-gradient(to left, rgb(101, 0, 103), rgb(202, 41, 205));
 }
 
 .btn--secondary {

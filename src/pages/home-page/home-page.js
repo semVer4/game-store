@@ -6,13 +6,14 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
-  authDomain: "game-store-one.firebaseapp.com",
-  projectId: "game-store-one",
-  storageBucket: "game-store-one.appspot.com",
-  messagingSenderId: "777893446023",
-  appId: "1:777893446023:web:4b00b8586c28f06cd69322",
-  measurementId: "G-MYLWLR99PX"
+  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
+  authDomain: "game-store-fa9d2.firebaseapp.com",
+  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
+  projectId: "game-store-fa9d2",
+  storageBucket: "game-store-fa9d2.appspot.com",
+  messagingSenderId: "90832189644",
+  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
+  measurementId: "G-PXDYFJ2XFD"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -28,7 +29,8 @@ export const HomePage = () => {
     const [genre, setGenre] = useState('');
 
     const prices = ['0-50', '50-100', '100-150', '150-200', '200-250', '250-300'];
-    const genres = ['Паркур', 'Гонки', 'Шутер', 'Глубокий сюжет', 'Открытый мир', 'Тактика'];
+
+    const [genres, setGenres] = useState([]);
     const [game, setGame] = useState([]);
 
     const handleSearchInputChange = (event) => {
@@ -57,26 +59,41 @@ export const HomePage = () => {
           });
           setGame(products.filter((item) => (price ? item.price >= Number(price.split('-')[0]) && 
             item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true)));
+
+          setGenres(products.map(products => products.genres));
         });
       return unsubscribe;
     }, [genre, price]);
     
-    useEffect(() => {
-      const unsubscribe = firebase.firestore().collection('products')
-      .onSnapshot((querySnapshot) => {
-        const products = [];
-        querySnapshot.forEach((doc) => {
-          setLoading(false);
-          products.push(doc.data());
-        });
-        setGame(products.filter((item) => (price ? item.price >= Number(price.split('-')[0]) && 
-          item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true)));
-      });
-    return unsubscribe;
-    });
+    // useEffect(() => {
+    //   const unsubscribe = firebase.firestore().collection('products')
+    //   .onSnapshot((querySnapshot) => {
+    //     const products = [];
+    //     querySnapshot.forEach((doc) => {
+    //       setLoading(false);
+    //       products.push(doc.data());
+    //     });
+    //     setGame(products.filter((item) => (price ? item.price >= Number(price.split('-')[0]) && 
+    //       item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true)));
+    //   });
+    // return unsubscribe;
+    // });
 
     return [
         <div>
+          <div className='telegram'>
+            <img 
+                src="https://www.t-developers.com/wp-content/uploads/2022/09/Telegram-logo-2048x1280.png" 
+                width="100px"
+              />
+            <div className='tg_left'>
+              <h1>С Telegram стало проще!</h1>
+              <span>Наш интернет-магазин теперь доступен и в Telegram!</span>
+            </div>
+            <div className='tg_right'>
+              <a href='https://t.me/Nationwide_bot'>Перейти в Telegram</a>
+            </div>
+          </div>
           <div className="flex-center">
             <div class="search-box">
               <button class="btn-search"><i class="gg-search"></i></button>
@@ -102,7 +119,18 @@ export const HomePage = () => {
               ))}
                 </select>
             </div>
+            <div className='select'>
+              <select value={price} onChange={handlePriceChange}>
+                  <option value="">Фильтрация по категориям</option>
+                    {prices.map((price) => (
+                    <option key={price} value={price}>
+                  {price}
+                  </option>
+              ))}
+                </select>
+            </div>
           </div>
+          <h1 className='spis'>Список доступных игр:</h1>
       </div>,
       <div>
         {loading ? (

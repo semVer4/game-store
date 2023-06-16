@@ -1,11 +1,14 @@
 .order-page {
     display: flex;
     justify-content: space-between;
-    padding: 0px 50px 0px 50px;
+    padding: 0px 90px 0px 90px;
 }
 
 .order-page__left {
     width: 70%;
+    background-color: rgb(120, 9, 120, 0.3);
+    padding: 20px;
+    border-radius: 10px;
 }
 
 .order-page__right {
@@ -15,5 +18,10 @@
 }
 
 .btn {
+    padding: 10px 0px 10px 0px;
+}
+
+.order-page .btn {
+    margin-top: 20px;
     padding: 10px;
 }

@@ -11,13 +11,14 @@ import 'firebase/compat/firestore';
 import { collection, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
-    authDomain: "game-store-one.firebaseapp.com",
-    projectId: "game-store-one",
-    storageBucket: "game-store-one.appspot.com",
-    messagingSenderId: "777893446023",
-    appId: "1:777893446023:web:4b00b8586c28f06cd69322",
-    measurementId: "G-MYLWLR99PX"
+  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
+  authDomain: "game-store-fa9d2.firebaseapp.com",
+  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
+  projectId: "game-store-fa9d2",
+  storageBucket: "game-store-fa9d2.appspot.com",
+  messagingSenderId: "90832189644",
+  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
+  measurementId: "G-PXDYFJ2XFD"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -28,36 +29,39 @@ export const OrderPage = () => {
     //const items = useSelector((state) => state.cart.itemsInCart);
     const [user, setUser] = useState(null);
     const [cart, setCart] = useState([]);
-    const [pGames, setpGames] = useState([]);
+    const [balance, setBalance] = useState(0);
     
     useEffect(() => {
       firebase.auth().onAuthStateChanged(user => {
         setUser(user);
         if (user) {
-          // Если пользователь авторизован, загрузите его корзину из базы данных
-          loadCart(user.uid);
+          loadCart(user);
+          loadBalance(user);
         }
       });
     }, []);
   
-    const loadCart = async (userId) => {
-      if (user) {
-        const unsubscribe = db
-          .collection('users')
-          .doc(user.uid)
-          .collection('carts')
-          .onSnapshot((snapshot) => {
-            const items = snapshot.docs.map((doc) => doc.data());
-            setCart(items);
-          });
-  
-        return () => {
-          unsubscribe();
-        };
+    const loadBalance = async (user) => {
+      const snapshot = await db.collection('users').doc(user.uid).get();
+      
+      if (snapshot.exists) {
+        setBalance(snapshot.data().balance);
       }
     };  
 
-    const [balance, setBalance] = useState(0);
+    const loadCart = async (user) => {
+      const unsubscribe = db
+      .collection('cart')
+      .where('id', '==', user.uid)
+      .onSnapshot((snapshot) => {
+        const items = snapshot.docs.map((doc) => doc.data());
+        setCart(items);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    };  
 
     const updateBalance = async (userId, newBalance) => {
       try {
@@ -70,7 +74,6 @@ export const OrderPage = () => {
           });
           console.log('Баланс пользователя успешно обновлен');
         } else {
-          // Если документ не существует, создаем его
           await userRef.set({
             balance: Number(newBalance),
           });
@@ -80,61 +83,33 @@ export const OrderPage = () => {
         console.error('Ошибка при обновлении баланса пользователя:', error);
       }
     };
-  
-    useEffect(() => {
-      // Получаем текущего пользователя Firebase
-      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          setUser(user);
-          // Загружаем баланс пользователя из Firestore
-          db
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((doc) => {
-              if (doc.exists) {
-                const userData = doc.data();
-                setBalance(userData.balance);
-              }
-            })
-            .catch((error) => {
-              console.error('Ошибка при загрузке баланса пользователя:', error);
-            });
-        }
-      });
-  
-      return () => {
-        unsubscribe();
-      };
-    }, []);  
-
-    const isGameInCart = async (userId, gameId) => {
-      // try {
-      //   const querySnapshot = await firestore()
-      //     .collection('')
-      //     .where('userId', '==', userId)
-      //     .where('gameId', '==', gameId)
-      //     .get();
-    
-      //   return !querySnapshot.empty;
-      // } catch (error) {
-      //   console.error('Ошибка при проверке наличия игры в корзине:', error);
-      //   return false;
-      // }
-    };
     
     const buyGame = async () => {
-      const isAlreadyInCart = await isGameInCart(user.uid, cart.map(item => item.id));
-
       const price = calcTotalPrice(cart);
-      const newCart = [...cart, cart];
 
-        if (balance >= price) {
-            const userRef = doc(collection(db, "pGames"), user.uid);
-        
-            setDoc(userRef, {
-              newCart
+      if (balance >= price) {
+          const gameRef = db.collection("cart").where('id', '==', user.uid);
+      
+          if (user) {
+            cart.map((cart) => {
+              db
+              .collection('pGames')
+              .add({
+                id: user.uid,
+                title: cart.title,
+                image: cart.image,
+              });
             });
+          }
+
+          history.push('/profile');
+
+          gameRef.get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+              doc.ref.delete();
+            });
+          });   
+
           const newBalance = Number(balance) - Number(price);
           setBalance(newBalance);
               
@@ -144,20 +119,21 @@ export const OrderPage = () => {
         }
     };
 
-    if(cart.length < 1) {
-      return <h1>Ваша корзина пуста!</h1>
-    }
-
     return (
         <div className="order-page">
-            <div className="order-page__left">
-                { cart.map(game => <OrderItem game={game} key={game.id} />) }
-            </div>
             <div className="order-page__right">
                 <div className="order-page__total-price">
-                    <span>{ cart.length } { enumerate(cart.length, ['товар', 'товара', 'товаров'])} на сумму {calcTotalPrice(cart)} руб.</span>
-                    <button className='btn btn--primary btn--medium' onClick={buyGame}>Приобрести</button>
+                  {cart.length > 0 ? 
+                    <div>
+                      <span>{ cart.length } { enumerate(cart.length, ['игра', 'игры', 'игр'])} = {calcTotalPrice(cart)} руб.</span>
+                      <button className='btn btn--primary btn--medium' onClick={buyGame}>Приобрести</button>  
+                    </div>
+                    : <h1>В корзине нет игр!</h1>
+                  }
                 </div>
+            </div>
+            <div className="order-page__left">
+                {cart.map(game => <OrderItem game={game} key={game.id} />)}
             </div>
         </div>
     )

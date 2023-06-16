@@ -2,14 +2,17 @@
     text-decoration: none;
     color: white;
     width: 20%;
-    height: 330px;
+    height: 360px;
     background-color: #293642;
     box-shadow: 3px 3px 300px rgb(187, 0, 255);
     border-radius: 15px;
     cursor: pointer;
     position: relative;
     left: 4.5%;
+    opacity: 0.9;
 }
+
+
 
 .game-item:not(:last-child) {
     margin-bottom: 30px;
@@ -18,11 +21,14 @@
 
 .game-item__title {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: bold; 
+    position: relative;
+    top: 40px;
 }
 
 .game-item__genre {
-    margin-top: 10px;
+    position: relative;
+    top: -20px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -44,4 +50,14 @@
 
 .btn {
     width: 190px;
+}
+
+@media screen and (max-width: 1520px) {
+    .game-item {
+        width: 20.5%;
+    }
+
+    .btn {
+        width: 130px;
+    }
 }

@@ -9,13 +9,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { collection, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
-  authDomain: "game-store-one.firebaseapp.com",
-  projectId: "game-store-one",
-  storageBucket: "game-store-one.appspot.com",
-  messagingSenderId: "777893446023",
-  appId: "1:777893446023:web:4b00b8586c28f06cd69322",
-  measurementId: "G-MYLWLR99PX"
+  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
+  authDomain: "game-store-fa9d2.firebaseapp.com",
+  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
+  projectId: "game-store-fa9d2",
+  storageBucket: "game-store-fa9d2.appspot.com",
+  messagingSenderId: "90832189644",
+  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
+  measurementId: "G-PXDYFJ2XFD"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -30,24 +31,36 @@ export const ProfilePage = () => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user);
       if (user) {
-        loadCart(user.uid);
+        loadCart(user);
+        loadBalance(user);
       }
     });
   }, []);
 
-  const loadCart = async (userId) => {
-    const snapshot = await db.collection('pGames').doc(userId).get();
-    if (snapshot.exists) {
-      setCart(snapshot.data().cart);
-    } else {
-      setCart([]);
-    }
-  };  
+  const loadCart = async (user) => {
+    const unsubscribe = db
+    .collection('pGames')
+    .where('id', '==', user.uid)
+    .onSnapshot((snapshot) => {
+      const items = snapshot.docs.map((doc) => doc.data());
+      setCart(items);
+    });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    return () => {
+      unsubscribe();
+    };
+  };  
 
   const [balance, setBalance] = useState(0);
   const [inputBalance, setInputBalance] = useState(0);
+
+  const loadBalance = async (user) => {
+    const snapshot = await db.collection('users').doc(user.uid).get();
+      
+    if (snapshot.exists) {
+      setBalance(snapshot.data().balance);
+    }
+  };  
 
   const updateBalance = async (userId, newBalance) => {
     try {
@@ -71,33 +84,6 @@ export const ProfilePage = () => {
     }
   };
 
-  useEffect(() => {
-    // Получаем текущего пользователя Firebase
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        // Загружаем баланс пользователя из Firestore
-        db
-          .collection('users')
-          .doc(user.uid)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              const userData = doc.data();
-              setBalance(userData.balance);
-            }
-          })
-          .catch((error) => {
-            console.error('Ошибка при загрузке баланса пользователя:', error);
-          });
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   const addMoney = () => {
     const newBalance = Number(balance) + Number(inputBalance);
     updateBalance(user.uid, newBalance);
@@ -110,8 +96,8 @@ export const ProfilePage = () => {
         <div>
           <p>Ваш баланс: {Number(balance)}р.</p>
           <div className='form1'>
-            <button className='test' onClick={addMoney}>Пополнить баланс</button>
-            <input onChange={(e) => setInputBalance(e.target.value)} />
+            <button className='btn btn--primary btn--small' onClick={addMoney} style={{height: 40, marginTop: 15, borderRadius: 0}}>Пополнить баланс</button>
+            <input className='form-style' placeholder='Введите желаемую сумму' onChange={(e) => setInputBalance(e.target.value)} style={{height: 40, padding: 10, marginLeft: 10}} />
           </div>
             <h1>Ваши игры:</h1>
               {cart.length > 0 ? 

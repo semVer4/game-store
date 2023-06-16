@@ -9,13 +9,14 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
-    authDomain: "game-store-one.firebaseapp.com",
-    projectId: "game-store-one",
-    storageBucket: "game-store-one.appspot.com",
-    messagingSenderId: "777893446023",
-    appId: "1:777893446023:web:4b00b8586c28f06cd69322",
-    measurementId: "G-MYLWLR99PX"
+  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
+  authDomain: "game-store-fa9d2.firebaseapp.com",
+  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
+  projectId: "game-store-fa9d2",
+  storageBucket: "game-store-fa9d2.appspot.com",
+  messagingSenderId: "90832189644",
+  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
+  measurementId: "G-PXDYFJ2XFD"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -24,41 +25,17 @@ const db = firebase.firestore();
 export const OrderItem = ({ game }) => {
     const dispatch = useDispatch();
 
-    const [cartItems, setCartItems] = useState([]);
-
-    const [user, setUser] = useState(null);
-    const [cart, setCart] = useState([]);
-
-    useEffect(() => {
-      const db = firebase.firestore();
-      const unsubscribe = db.collection("carts").onSnapshot((snapshot) => {
-        const cartItems = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setCartItems(cartItems);
-      });
-      return () => {
-        unsubscribe();
-      };
-    }, []);
-  
-    const loadCart = async (userId) => {
-      const snapshot = await db.collection('carts').doc(userId).get();
-      if (snapshot.exists) { 
-        setCart(snapshot.data().cart);
-      } else {
-        setCart([]);
-      }
-    };  
-
-    const deleteCartItem = async (cartItemId) => {
+    const deleteCartItem = async () => {
       try {
-          await firebase.firestore().collection("carts").doc(cartItemId).delete();
-          
-        } catch (error) {
-          console.error("Error removing item from cart: ", error);
-        }
+        const gameRef = db.collection('cart').where('productId', '==', game.productId);
+        gameRef.get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            doc.ref.delete();
+          });
+        });                 
+      } catch (error) {
+        console.error("Error removing item from cart: ", error);
+      }
     };
 
     return (
@@ -74,12 +51,7 @@ export const OrderItem = ({ game }) => {
                 <AiOutlineCloseCircle
                     size={25}
                     className="cart-item__delete-icon"
-                    onClick={() => {
-                        if (cartItems[0].id) {
-                          deleteCartItem(cartItems[0].id);
-                          loadCart(cartItems[0].id);
-                        }
-                    }}
+                    onClick={deleteCartItem}
                 />
             </div>
         </div>

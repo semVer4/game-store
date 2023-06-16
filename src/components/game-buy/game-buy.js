@@ -11,13 +11,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { collection, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDM0QhgW7r0EFvTJsx8SQo7Ot4BSsTIbO0",
-    authDomain: "game-store-one.firebaseapp.com",
-    projectId: "game-store-one",
-    storageBucket: "game-store-one.appspot.com",
-    messagingSenderId: "777893446023",
-    appId: "1:777893446023:web:4b00b8586c28f06cd69322",
-    measurementId: "G-MYLWLR99PX"
+  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
+  authDomain: "game-store-fa9d2.firebaseapp.com",
+  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
+  projectId: "game-store-fa9d2",
+  storageBucket: "game-store-fa9d2.appspot.com",
+  messagingSenderId: "90832189644",
+  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
+  measurementId: "G-PXDYFJ2XFD"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -37,50 +38,53 @@ export const GameBuy = ({ game }) => {
     firebase.auth().onAuthStateChanged(user => {
       setUser(user);
       if (user) {
-        // Если пользователь авторизован, загрузите его корзину из базы данных
-        loadCart();
+        loadCart(user);
       }
     });
   }, []);
 
-  const handleAddToCart = async (cart) => {
+  var productId = null;
+  if (game) {
+    productId = game.id;
+  }
+
+  const loadCart = async (user) => {
+    const unsubscribe = db
+      .collection('cart')
+      .where('id', '==', user.uid)
+      .onSnapshot((snapshot) => {
+        const items = snapshot.docs.map((doc) => doc.data());
+        setCart(items);
+      });
+
+      return () => {
+        unsubscribe();
+    };
+  };
+
+  const handleAddToCart = async () => {
     if (user) {
-      db.collection('users').doc(user.uid).collection('cart').add({
-        cart: cart
-      })
-        .then(() => {
-          setCart([cart, cart]);
-          console.log('Товар добавлен в корзину.');
-        })
-        .catch((error) => {
-          console.error('Ошибка при добавлении товара в корзину:', error);
-        });
+      db
+      .collection('cart')
+      .add({
+        productId,
+        id: user.uid,
+        title: game.title,
+        image: game.image,
+        price: Number(game.price),
+        video: game.video,
+        description: game.description
+      }); 
     } else {
       history.push('/auth');
     }
   };
 
-  const loadCart = async () => {
-    if (user) {
-      const unsubscribe = db
-        .doc(user.uid)
-        .collection('carts')
-        .onSnapshot((snapshot) => {
-          const items = snapshot.docs.map((doc) => doc.data());
-          setCart(items);
-        });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  };  
-
   const handleClick = (e) => {
     e.stopPropagation();
     //dispatch(setItemInCart(game));
 
-    handleAddToCart(game);
+    handleAddToCart();
   };
 
   return (
