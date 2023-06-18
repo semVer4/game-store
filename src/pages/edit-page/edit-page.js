@@ -1,26 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector} from 'react-redux';
-import { GameBuy } from "../../components/game-buy";
-import { GameCover } from "../../components/game-cover/game-cover";
-import { GameGenre } from "../../components/game-genre";
+import { auth, db } from "../../config/config";
 import "./edit-page.css";
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
-  authDomain: "game-store-fa9d2.firebaseapp.com",
-  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
-  projectId: "game-store-fa9d2",
-  storageBucket: "game-store-fa9d2.appspot.com",
-  messagingSenderId: "90832189644",
-  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
-  measurementId: "G-PXDYFJ2XFD"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
 export const EditPage = () => {
   const game = useSelector(state => state.games.currentGame);
@@ -29,6 +10,8 @@ export const EditPage = () => {
   const [image, setImage] = useState('');
   const [price, setPrice] = useState('');
   const [video, setVideo] = useState('');
+  const [genre, setGenre] = useState([]);
+  const [categor, setCategor] = useState([]);
   const [description, setDescription] = useState('');
 
   if(!game) return null
@@ -91,6 +74,18 @@ export const EditPage = () => {
     });    
   };
 
+  const editGenre = () => {
+    productRef.update({
+      genre: Array(genre),
+    })
+    .then(() => {
+      console.log('Product successfully updated');
+    })
+    .catch((error) => {
+      console.error('Error updating product:', error);
+    });    
+  };
+
   const editPrice = () => {
     productRef.update({
       price: Number(price),
@@ -120,6 +115,16 @@ export const EditPage = () => {
           <h1>Изменить ссылку на изображение</h1>
           <input className="form__field" placeholder={game.image} value={image} onChange={(e) => setImage(e.target.value)} />
           <button className="btnz btns btn--inside uppercase" onClick={editImage}>Изменить</button>
+
+          {game.genres.map((item) => {
+            return (
+              <>
+                <h1>Изменить жанр</h1>
+                <input className="form__field" placeholder={item} onChange={(e) => setGenre(e.target.value)} />
+                <button className="btnz btns btn--inside uppercase" onClick={editGenre}>Изменить</button>
+              </>
+            )
+          })}
 
           <h1>Изменить описание</h1>
           <input className="form__field" placeholder={game.description} value={description} onChange={(e) => setDescription(e.target.value)} />

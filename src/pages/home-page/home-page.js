@@ -1,24 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GameItem } from '../../components/game-item';
 import './home-page.css';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
-  authDomain: "game-store-fa9d2.firebaseapp.com",
-  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
-  projectId: "game-store-fa9d2",
-  storageBucket: "game-store-fa9d2.appspot.com",
-  messagingSenderId: "90832189644",
-  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
-  measurementId: "G-PXDYFJ2XFD"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
+import { db } from "../../config/config";
 
 export const HomePage = () => {  
     const [loading, setLoading] = useState(true);
@@ -27,10 +10,12 @@ export const HomePage = () => {
 
     const [price, setPrice] = useState('');
     const [genre, setGenre] = useState('');
+    const [categor, setCategor] = useState('');
 
     const prices = ['0-50', '50-100', '100-150', '150-200', '200-250', '250-300'];
 
     const [genres, setGenres] = useState([]);
+    const categors = ['Обучающие', 'Исторические', 'Детские'];
     const [game, setGame] = useState([]);
 
     const handleSearchInputChange = (event) => {
@@ -39,6 +24,10 @@ export const HomePage = () => {
 
     function handleGenreChange(event) {
       setGenre(event.target.value);
+    }
+
+    function handleCategorChange(event) {
+      setCategor(event.target.value);
     }
 
     function handlePriceChange(event) {
@@ -50,7 +39,7 @@ export const HomePage = () => {
     });
 
     useEffect(() => {
-      const unsubscribe = firebase.firestore().collection('products')
+      const unsubscribe = db.collection('products')
         .onSnapshot((querySnapshot) => {
           const products = [];
           querySnapshot.forEach((doc) => {
@@ -58,26 +47,13 @@ export const HomePage = () => {
             products.push(doc.data());
           });
           setGame(products.filter((item) => (price ? item.price >= Number(price.split('-')[0]) && 
-            item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true)));
-
-          setGenres(products.map(products => products.genres));
+            item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true) &&
+              (categor ? item.categor[0] === categor : true)));
+       
+            setGenres(products.map(products => products.genres));
         });
       return unsubscribe;
-    }, [genre, price]);
-    
-    // useEffect(() => {
-    //   const unsubscribe = firebase.firestore().collection('products')
-    //   .onSnapshot((querySnapshot) => {
-    //     const products = [];
-    //     querySnapshot.forEach((doc) => {
-    //       setLoading(false);
-    //       products.push(doc.data());
-    //     });
-    //     setGame(products.filter((item) => (price ? item.price >= Number(price.split('-')[0]) && 
-    //       item.price <= Number(price.split('-')[1]) : true) && (genre ? item.genres[0] === genre : true)));
-    //   });
-    // return unsubscribe;
-    // });
+    }, [genre, price, categor]);
 
     return [
         <div>
@@ -120,11 +96,11 @@ export const HomePage = () => {
                 </select>
             </div>
             <div className='select'>
-              <select value={price} onChange={handlePriceChange}>
+              <select value={categor} onChange={handleCategorChange}>
                   <option value="">Фильтрация по категориям</option>
-                    {prices.map((price) => (
-                    <option key={price} value={price}>
-                  {price}
+                    {categors.map((categor) => (
+                    <option key={categor} value={categor}>
+                  {categor}
                   </option>
               ))}
                 </select>

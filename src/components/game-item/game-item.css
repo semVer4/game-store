@@ -12,7 +12,10 @@
     opacity: 0.9;
 }
 
-
+.menuCenter {
+    display: flex;
+    gap: 10px;
+}
 
 .game-item:not(:last-child) {
     margin-bottom: 30px;

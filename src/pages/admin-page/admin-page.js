@@ -27,6 +27,7 @@ export const AdminPage = () => {
   const [price, setPrice] = useState();
   const [video, setVideo] = useState('');
   const [genres, setGenres] = useState(['']);
+  const [categor, setCategor] = useState(['']);
   const [description, setDescription] = useState('');
 
   const addProduct = () => {
@@ -41,6 +42,7 @@ export const AdminPage = () => {
       price: Number(price),
       video: video,
       genres: Array(genres),
+      categor: Array(categor),
       description: description
     });
   };
@@ -52,6 +54,7 @@ export const AdminPage = () => {
       <input placeholder='price' onChange={e => setPrice(e.target.value)} />
       <input placeholder='video' onChange={e => setVideo(e.target.value)} />
       <input placeholder='genre' onChange={e => setGenres(e.target.value)} />
+      <input placeholder='categor' onChange={e => setCategor(e.target.value)} />
       <input placeholder='description' onChange={e => setDescription(e.target.value)} />
 
       <button onClick={addProduct}>Создать</button>

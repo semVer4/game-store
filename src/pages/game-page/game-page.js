@@ -7,25 +7,7 @@ import "./game-page.css";
 import ReactSwipe from 'react-swipe';
 import '../home-page/home-page.css';
 import { GameItem } from '../../components/game-item';
-
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCBPKNt_f3VogrYTIZdZh6gGSoukXJW0do",
-  authDomain: "game-store-fa9d2.firebaseapp.com",
-  databaseURL: "https://game-store-fa9d2-default-rtdb.firebaseio.com",
-  projectId: "game-store-fa9d2",
-  storageBucket: "game-store-fa9d2.appspot.com",
-  messagingSenderId: "90832189644",
-  appId: "1:90832189644:web:455d9c512535d56f8d6a69",
-  measurementId: "G-PXDYFJ2XFD"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
+import { auth, db } from "../../config/config";
 
 export const GamePage = () => {
   const game = useSelector(state => state.games.currentGame);
@@ -38,13 +20,13 @@ export const GamePage = () => {
   const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
       setUser(user);
     });
   }, []);
 
   useEffect(() => {
-    const unsubscribe = firebase.firestore().collection('products')
+    const unsubscribe = db.collection('products')
     .onSnapshot((querySnapshot) => {
       const products = [];
       querySnapshot.forEach((doc) => {
