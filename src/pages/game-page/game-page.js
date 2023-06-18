@@ -8,6 +8,7 @@ import ReactSwipe from 'react-swipe';
 import '../home-page/home-page.css';
 import { GameItem } from '../../components/game-item';
 import { auth, db } from "../../config/config";
+import { GameCategor } from "../../components/game-categor";
 
 export const GamePage = () => {
   const game = useSelector(state => state.games.currentGame);
@@ -121,6 +122,9 @@ export const GamePage = () => {
           <p className="secondary-text">{game.description}</p>
           {game.genres.map((genre) => (
             <GameGenre genre={genre} key={genre} />
+          ))}
+          {game.categor.map((categor) => (
+            <GameCategor categor={categor} key={categor} />
           ))}
           <div className="game-page__buy-game">
             <GameBuy game={game} />
